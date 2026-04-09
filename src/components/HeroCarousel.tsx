@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
+import { Product } from "@/lib/types";
 
-export default function HeroCarousel({ products }: { products: any[] }) {
+export default function HeroCarousel({ products }: { products: Product[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   
   // Usar solo los primeros 5 productos con foto para el carrusel

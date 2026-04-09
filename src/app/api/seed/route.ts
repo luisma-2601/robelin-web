@@ -67,7 +67,8 @@ export async function GET() {
     if (error) throw error;
 
     return NextResponse.json({ success: true, message: "Datos de prueba insertados exitosamente" });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Error desconocido";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

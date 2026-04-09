@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getBcvRate } from "@/lib/bcv";
-import ProductCard from "@/components/ProductCard";
+
 import HeroCarousel from "@/components/HeroCarousel";
 import Catalog from "@/components/Catalog";
 

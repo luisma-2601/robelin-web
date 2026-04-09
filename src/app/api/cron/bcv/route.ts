@@ -61,8 +61,9 @@ export async function GET(request: Request) {
       message: "Tasa BCV actualizada correctamente",
       rate: newRate,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error el Cron Job de BCV:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const msg = error instanceof Error ? error.message : "Error desconocido";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

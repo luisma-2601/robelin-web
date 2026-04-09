@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import ProductCard from "./ProductCard";
+import { Product } from "@/lib/types";
 import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import { Search, Plus } from "lucide-react";
 import Link from "next/link";
 
-export default function Catalog({ products, bcvRate, isAdmin }: { products: any[], bcvRate: number, isAdmin?: boolean }) {
+export default function Catalog({ products, bcvRate, isAdmin }: { products: Product[], bcvRate: number, isAdmin?: boolean }) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 

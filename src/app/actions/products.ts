@@ -1,6 +1,7 @@
 "use server";
 import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
+import { Product } from "@/lib/types";
 
 function getAdminClient() {
   return createClient(
@@ -12,7 +13,7 @@ function getAdminClient() {
   );
 }
 
-export async function updateProductAction(id: string, updates: any) {
+export async function updateProductAction(id: string, updates: Partial<Product>) {
   const supabase = getAdminClient();
   const { error, data } = await supabase.from("products").update(updates).eq("id", id).select();
   

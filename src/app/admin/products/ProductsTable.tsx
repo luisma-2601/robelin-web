@@ -7,8 +7,9 @@ import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import { updateProductAction, deleteProductAction } from "@/app/actions/products";
 import CustomSelect from "@/components/CustomSelect";
 import CustomNumberInput from "@/components/CustomNumberInput";
+import { Product } from "@/lib/types";
 
-export default function ProductsTable({ initialProducts }: { initialProducts: any[] }) {
+export default function ProductsTable({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState(initialProducts);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ price_usd: 0, stock: 0, category: "" });
@@ -22,7 +23,7 @@ export default function ProductsTable({ initialProducts }: { initialProducts: an
   const supabase = createClient();
   const router = useRouter();
 
-  const handleEdit = (product: any) => {
+  const handleEdit = (product: Product) => {
     setEditingId(product.id);
     setEditForm({ price_usd: product.price_usd, stock: product.stock, category: product.category });
     setEditFile(null);
@@ -36,9 +37,10 @@ export default function ProductsTable({ initialProducts }: { initialProducts: an
       setProducts(products.filter(p => p.id !== deleteModalId));
       setDeleteModalId(null);
       router.refresh();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Error desconocido";
       console.error("Server Action Error Delete:", error);
-      alert("Error eliminando producto: " + error.message);
+      alert("Error eliminando producto: " + msg);
     }
     setIsDeleting(false);
   };
@@ -71,14 +73,15 @@ export default function ProductsTable({ initialProducts }: { initialProducts: an
       setEditingId(null);
       setEditFile(null);
       router.refresh();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Error desconocido";
       console.error("Server Action Error Update:", error);
-      alert("Error guardando producto: " + error.message);
+      alert("Error guardando producto: " + msg);
     }
     setIsUploading(false);
   };
 
-  let filteredProducts = products.filter(p => filterCategory === "All" || p.category === filterCategory);
+  const filteredProducts = products.filter(p => filterCategory === "All" || p.category === filterCategory);
 
   filteredProducts.sort((a, b) => {
     switch (sortBy) {

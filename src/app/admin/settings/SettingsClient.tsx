@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import CustomNumberInput from "@/components/CustomNumberInput";
 
-export default function SettingsClient({ initialSettings }: { initialSettings: any }) {
+export default function SettingsClient({ initialSettings }: { initialSettings: { bcv_rate: number, is_manual_override: boolean } | null }) {
   const [bcvRate, setBcvRate] = useState(initialSettings?.bcv_rate || "");
   const [isManual, setIsManual] = useState(initialSettings?.is_manual_override || false);
   const [loading, setLoading] = useState(false);

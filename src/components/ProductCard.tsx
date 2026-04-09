@@ -1,8 +1,9 @@
 "use client";
 import { useCartStore } from "@/store/cartStore";
 import { ShoppingBag } from "lucide-react";
+import { Product } from "@/lib/types";
 
-export default function ProductCard({ product, bcvRate }: { product: any, bcvRate: number }) {
+export default function ProductCard({ product, bcvRate }: { product: Product, bcvRate: number }) {
   const addItem = useCartStore(state => state.addItem);
   const priceVes = product.price_usd * bcvRate;
   const isOutOfStock = product.stock <= 0;
@@ -46,7 +47,13 @@ export default function ProductCard({ product, bcvRate }: { product: any, bcvRat
           </div>
           
           <button 
-            onClick={() => addItem(product)}
+            onClick={() => addItem({
+            id: product.id,
+            name: product.name,
+            price_usd: product.price_usd,
+            image_url: product.image_url,
+            quantity: 1
+          })}
             disabled={isOutOfStock}
             className="w-10 h-10 rounded-full bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 flex items-center justify-center hover:bg-yellow-400/20 hover:border-yellow-400/60 hover:shadow-[0_0_15px_rgba(250,204,21,0.4)] backdrop-blur-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
             aria-label="Add to cart"

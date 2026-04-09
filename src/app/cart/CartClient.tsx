@@ -57,8 +57,9 @@ export default function CartClient({ bcvRate }: { bcvRate: number }) {
       message += `\n*Total a pagar: $${totalUsd.toFixed(2)} USD (Bs. ${totalVes.toFixed(2)})*\n\nPor favor indícame los métodos de pago.`;
       
       window.location.href = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
-    } catch (e: any) {
-      alert("Error procesando tu orden: " + e.message);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Error desconocido";
+      alert("Error procesando tu orden: " + msg);
       setLoading(false);
     }
   };

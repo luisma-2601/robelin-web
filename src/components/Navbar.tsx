@@ -4,10 +4,11 @@ import { ShoppingCart, User, LogOut, Star } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Session } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const items = useCartStore((state) => state.items);
   const [mounted, setMounted] = useState(false);

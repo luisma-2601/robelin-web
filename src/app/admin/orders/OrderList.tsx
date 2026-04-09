@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Order, OrderItem } from "@/lib/types";
 
-export default function OrderList({ initialOrders }: { initialOrders: any[] }) {
+export default function OrderList({ initialOrders }: { initialOrders: Order[] }) {
   const [orders, setOrders] = useState(initialOrders);
   const supabase = createClient();
 
@@ -36,7 +37,7 @@ export default function OrderList({ initialOrders }: { initialOrders: any[] }) {
           <div className="border-t border-border pt-4">
             <h4 className="text-sm font-medium text-gray-300 mb-2">Artículos:</h4>
             <ul className="space-y-2">
-              {order.order_items.map((item: any) => (
+              {order.order_items.map((item: OrderItem) => (
                 <li key={item.id} className="text-sm text-gray-400 flex justify-between border-b border-border/50 pb-2 mb-2">
                   <span className="flex items-center gap-2">
                     {item.products?.image_url && <img src={item.products.image_url} alt="" className="w-8 h-8 rounded object-cover" />}

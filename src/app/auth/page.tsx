@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 import StateSelect from "@/components/StateSelect";
 
@@ -16,7 +15,7 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   
-  const router = useRouter();
+
   const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {

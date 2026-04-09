@@ -4,7 +4,9 @@ import { createClient } from "@/lib/supabase/client";
 import { User, Mail, Phone, MapPin, Save } from "lucide-react";
 import StateSelect from "@/components/StateSelect";
 
-export default function ProfileClient({ profile }: { profile: any }) {
+import { Profile } from "@/lib/types";
+
+export default function ProfileClient({ profile }: { profile: Profile }) {
   const [formData, setFormData] = useState({
     name: profile?.name || "",
     phone: profile?.phone || "",
