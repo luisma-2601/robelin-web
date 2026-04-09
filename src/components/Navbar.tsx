@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ShoppingCart, User, LogOut } from "lucide-react";
+import { ShoppingCart, User, LogOut, Star } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [session, setSession] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const items = useCartStore((state) => state.items);
   const [mounted, setMounted] = useState(false);
   const supabase = createClient();
@@ -15,8 +16,12 @@ export default function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
+      if (session?.user) {
+        const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
+        if (profile?.role === "admin") setIsAdmin(true);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -53,7 +58,7 @@ export default function Navbar() {
             <Link href="/cart" className="relative text-gray-400 hover:text-white transition-colors bg-white/5 p-2 rounded-full border border-white/5">
               <ShoppingCart size={20} />
               {mounted && itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(139,92,246,0.6)]">
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.6)]">
                   {itemCount}
                 </span>
               )}
@@ -64,13 +69,22 @@ export default function Navbar() {
                 <Link href="/profile" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm">
                   <User size={16} /> <span>Perfil</span>
                 </Link>
+                {isAdmin && (
+                  <>
+                    <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
+                    <Link href="/admin" className="text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 text-sm font-bold tracking-wide">
+                      <Star size={14} className="fill-yellow-400 filter drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] animate-pulse" />
+                      <span>ADMIN</span>
+                    </Link>
+                  </>
+                )}
                 <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
                 <button onClick={handleLogout} className="text-gray-400 hover:text-red-400 transition-colors">
                   <LogOut size={16} />
                 </button>
               </div>
             ) : (
-              <Link href="/auth" className="text-sm font-medium bg-primary/10 text-primary border border-primary/30 px-6 py-2 rounded-full hover:bg-primary/20 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:border-primary/50 transition-all backdrop-blur-md">
+              <Link href="/auth" className="text-sm font-medium bg-primary/10 text-primary border border-primary/30 px-6 py-2 rounded-full hover:bg-primary/20 hover:shadow-[0_0_15px_rgba(250,204,21,0.3)] hover:border-primary/50 transition-all backdrop-blur-md">
                 Sign in
               </Link>
             )}

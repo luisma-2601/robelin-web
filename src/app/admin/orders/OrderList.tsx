@@ -51,7 +51,7 @@ export default function OrderList({ initialOrders }: { initialOrders: any[] }) {
             <div className="mt-4 flex justify-end bg-black/20 p-4 -mx-6 -mb-6 rounded-b-xl border-t border-border">
               <button 
                 onClick={() => handleApprove(order.id)}
-                className="bg-primary text-black px-6 py-2 rounded-lg font-medium hover:bg-primaryHover transition-colors"
+                className="bg-primary/10 text-primary border border-primary/30 px-6 py-2 rounded-lg font-medium hover:bg-primary/20 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(250,204,21,0.2)] transition-all backdrop-blur-sm"
               >
                 Aprobar y Descontar Stock
               </button>

@@ -8,7 +8,7 @@ export default function ProductCard({ product, bcvRate }: { product: any, bcvRat
   const isOutOfStock = product.stock <= 0;
 
   return (
-    <div className="group relative bg-[#111] border border-white/5 rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-300 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgb(139,92,246,0.15)]">
+    <div className="group relative bg-black border border-[#333] rounded-2xl overflow-hidden hover:border-yellow-400/40 transition-all duration-300 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(250,204,21,0.15)]">
       {/* Glossy highlight effect on top border */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
       
@@ -32,7 +32,7 @@ export default function ProductCard({ product, bcvRate }: { product: any, bcvRat
 
       <div className="p-6 flex flex-col flex-grow bg-gradient-to-b from-transparent to-black/40">
         <div className="mb-3">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-primary/80 font-bold">{product.category}</span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-yellow-500/80 font-bold">{product.category}</span>
         </div>
         <h3 className="text-lg font-medium text-white/90 mb-2 leading-snug">{product.name}</h3>
         {product.description && (
@@ -48,7 +48,7 @@ export default function ProductCard({ product, bcvRate }: { product: any, bcvRat
           <button 
             onClick={() => addItem(product)}
             disabled={isOutOfStock}
-            className="w-10 h-10 rounded-full bg-primary/10 text-primary border border-primary/30 flex items-center justify-center hover:bg-primary/20 hover:border-primary/60 hover:shadow-[0_0_15px_rgba(139,92,246,0.4)] backdrop-blur-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+            className="w-10 h-10 rounded-full bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 flex items-center justify-center hover:bg-yellow-400/20 hover:border-yellow-400/60 hover:shadow-[0_0_15px_rgba(250,204,21,0.4)] backdrop-blur-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
             aria-label="Add to cart"
           >
             <ShoppingBag size={16} className="group-hover/btn:scale-110 transition-transform" />

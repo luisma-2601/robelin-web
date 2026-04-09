@@ -68,7 +68,7 @@ export default function CartClient({ bcvRate }: { bcvRate: number }) {
       <div className="text-center py-20 bg-card border border-border rounded-2xl">
         <h2 className="text-2xl font-bold text-white mb-4">Tu carrito está vacío</h2>
         <p className="text-gray-400 mb-8">Agrega algunos productos exclusivos para continuar.</p>
-        <Link href="/" className="inline-block bg-primary/10 text-primary border border-primary/30 font-semibold px-8 py-3 rounded-xl hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all backdrop-blur-md">
+        <Link href="/" className="inline-block bg-primary/10 text-primary border border-primary/30 font-semibold px-8 py-3 rounded-xl hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(250,204,21,0.2)] transition-all backdrop-blur-md">
           Explorar Catálogo
         </Link>
       </div>
@@ -148,7 +148,7 @@ export default function CartClient({ bcvRate }: { bcvRate: number }) {
           <button 
             onClick={handleCheckout}
             disabled={loading}
-            className="w-full bg-primary/10 text-primary border border-primary/30 font-bold py-4 rounded-xl hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 backdrop-blur-md"
+            className="w-full bg-primary/10 text-primary border border-primary/30 font-bold py-4 rounded-xl hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(250,204,21,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 backdrop-blur-md"
           >
             {loading ? "Procesando..." : (
               <>

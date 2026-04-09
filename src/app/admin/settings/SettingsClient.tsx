@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import CustomNumberInput from "@/components/CustomNumberInput";
 
 export default function SettingsClient({ initialSettings }: { initialSettings: any }) {
   const [bcvRate, setBcvRate] = useState(initialSettings?.bcv_rate || "");
@@ -34,20 +35,22 @@ export default function SettingsClient({ initialSettings }: { initialSettings: a
 
         <div>
           <label className="block text-sm font-medium text-gray-400 mb-2">Tasa de Cambio (VES / USD)</label>
-          <input 
-            type="number" 
-            step="0.01" 
-            value={bcvRate} 
-            onChange={(e) => setBcvRate(e.target.value)}
-            disabled={!isManual}
-            className="w-full bg-black border border-border rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-primary disabled:opacity-50"
-          />
+          <div className={!isManual ? "opacity-50 pointer-events-none" : ""}>
+            <CustomNumberInput 
+              value={bcvRate} 
+              onChangeValue={(val) => setBcvRate(val)} 
+              step={0.01} 
+              min={0}
+              prefixSymbol="Bs."
+              className="w-full"
+            />
+          </div>
         </div>
 
         <button 
           onClick={handleSave} 
           disabled={loading}
-          className="w-full bg-primary text-black font-semibold py-2 rounded-lg hover:bg-primaryHover transition-colors disabled:opacity-50"
+          className="w-full bg-primary/10 text-primary border border-primary/30 font-semibold py-2 rounded-lg hover:bg-primary/20 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(250,204,21,0.2)] transition-all disabled:opacity-50 backdrop-blur-sm"
         >
           {loading ? "Guardando..." : "Guardar Cambios"}
         </button>

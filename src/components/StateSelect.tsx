@@ -48,7 +48,7 @@ export default function StateSelect({ value, onChange }: { value: string; onChan
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
               <input
                 type="text"
-                className="w-full bg-[#111] border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary/50 focus:shadow-[0_0_15px_rgba(139,92,246,0.15)] placeholder-gray-600 transition-all"
+                className="w-full bg-[#111] border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary/50 focus:shadow-[0_0_15px_rgba(250,204,21,0.15)] placeholder-gray-600 transition-all"
                 placeholder="Buscar estado..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -69,7 +69,7 @@ export default function StateSelect({ value, onChange }: { value: string; onChan
                   }}
                   className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all duration-200 ${
                     value === state 
-                      ? "bg-primary/20 text-primary font-bold shadow-[0_0_15px_rgba(139,92,246,0.1)] border border-primary/20" 
+                      ? "bg-primary/20 text-primary font-bold shadow-[0_0_15px_rgba(250,204,21,0.1)] border border-primary/20" 
                       : "text-gray-300 hover:bg-white/5 hover:text-white border border-transparent"
                   }`}
                 >

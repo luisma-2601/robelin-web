@@ -108,7 +108,7 @@ export default function AuthPage() {
             <input required type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-black border border-border rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none" />
           </div>
 
-          <button type="submit" disabled={loading} className="w-full bg-primary/10 text-primary border border-primary/30 font-bold py-3 rounded-xl mt-6 hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:border-primary/50 transition-all backdrop-blur-md disabled:opacity-50">
+          <button type="submit" disabled={loading} className="w-full bg-primary/10 text-primary border border-primary/30 font-bold py-3 rounded-xl mt-6 hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(250,204,21,0.2)] hover:border-primary/50 transition-all backdrop-blur-md disabled:opacity-50">
             {loading ? "Cargando..." : isLogin ? "Ingresar" : "Registrarse"}
           </button>
         </form>

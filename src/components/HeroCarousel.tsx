@@ -19,7 +19,7 @@ export default function HeroCarousel({ products }: { products: any[] }) {
   if (carouselProducts.length === 0) return null;
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] rounded-[30px] overflow-hidden mb-20 border border-white/5 shadow-[0_0_50px_rgba(139,92,246,0.1)] group">
+    <div className="relative w-full h-[500px] md:h-[600px] rounded-[30px] overflow-hidden mb-20 border border-white/5 shadow-[0_0_50px_rgba(250,204,21,0.1)] group">
       {carouselProducts.map((product, index) => (
         <div
           key={product.id}

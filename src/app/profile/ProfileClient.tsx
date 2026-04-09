@@ -40,7 +40,7 @@ export default function ProfileClient({ profile }: { profile: any }) {
     <div className="bg-[#111] border border-white/5 rounded-[30px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
       <div className="flex flex-col items-center justify-center mb-8 relative">
          <div className="absolute top-0 w-full h-32 bg-primary/5 blur-[40px] pointer-events-none rounded-full"></div>
-         <div className="w-20 h-20 bg-gradient-to-tr from-primary/20 to-primary/5 rounded-full flex items-center justify-center border border-primary/30 mb-4 shadow-[0_0_20px_rgba(139,92,246,0.2)] relative z-10">
+         <div className="w-20 h-20 bg-gradient-to-tr from-primary/20 to-primary/5 rounded-full flex items-center justify-center border border-primary/30 mb-4 shadow-[0_0_20px_rgba(250,204,21,0.2)] relative z-10">
             <User size={32} className="text-primary" />
          </div>
          <h2 className="text-xl font-bold text-white text-center tracking-tight">{profile?.name || "Usuario"}</h2>
@@ -48,7 +48,7 @@ export default function ProfileClient({ profile }: { profile: any }) {
       </div>
 
       {success && (
-        <div className="bg-primary/10 text-primary border border-primary/30 p-3 rounded-xl text-xs font-medium mb-6 text-center shadow-[0_0_20px_rgba(139,92,246,0.15)] relative z-10">
+        <div className="bg-primary/10 text-primary border border-primary/30 p-3 rounded-xl text-xs font-medium mb-6 text-center shadow-[0_0_20px_rgba(250,204,21,0.15)] relative z-10">
           {success}
         </div>
       )}
@@ -85,7 +85,7 @@ export default function ProfileClient({ profile }: { profile: any }) {
         <button 
           type="submit" 
           disabled={loading}
-          className="w-full mt-6 flex justify-center items-center gap-2 bg-primary/10 text-primary border border-primary/30 font-semibold py-3.5 rounded-xl hover:bg-primary/20 hover:border-primary/50 hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] transition-all backdrop-blur-md disabled:opacity-50"
+          className="w-full mt-6 flex justify-center items-center gap-2 bg-primary/10 text-primary border border-primary/30 font-semibold py-3.5 rounded-xl hover:bg-primary/20 hover:border-primary/50 hover:shadow-[0_0_25px_rgba(250,204,21,0.3)] transition-all backdrop-blur-md disabled:opacity-50"
         >
           <Save size={18} /> {loading ? "Aplicando..." : "Guardar Modificación"}
         </button>
