@@ -96,7 +96,7 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Delete Confirmation Modal */}
       {deleteModalId && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -131,7 +131,8 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row justify-end gap-4 mb-3">
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row justify-end gap-3 mb-2">
         <CustomSelect 
           value={sortBy} 
           onChange={setSortBy}
@@ -143,7 +144,7 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
             { value: "stock-asc", label: "Stock (Menor a Mayor)" },
             { value: "stock-desc", label: "Stock (Mayor a Menor)" }
           ]}
-          className="w-56 rounded-full shadow-md z-10"
+          className="w-full sm:w-52 rounded-full shadow-md z-10"
         />
         <CustomSelect 
           value={filterCategory} 
@@ -152,105 +153,184 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
             { value: "All", label: "Todas las Categorías" },
             ...PRODUCT_CATEGORIES.map(cat => ({ value: cat, label: cat }))
           ]}
-          className="w-56 rounded-full shadow-md z-10"
+          className="w-full sm:w-52 rounded-full shadow-md z-10"
         />
       </div>
-      <div className="bg-card border border-white/5 shadow-2xl rounded-2xl overflow-hidden">
-      <table className="w-full text-left text-base text-gray-300">
-        <thead className="bg-[#0a0a0a] text-gray-400 border-b border-white/5 uppercase tracking-wider text-xs">
-          <tr>
-            <th className="px-6 py-5 font-semibold">Producto</th>
-            <th className="px-6 py-5 font-semibold">Categoría</th>
-            <th className="px-6 py-5 font-semibold">Precio (USD)</th>
-            <th className="px-6 py-5 font-semibold">Stock</th>
-            <th className="px-6 py-5 font-semibold text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-white/5">
-          {filteredProducts.map((product) => {
-            const isEditing = editingId === product.id;
-            return (
-              <tr key={product.id} className="hover:bg-white/5 transition-colors">
-                <td className="px-6 py-5 font-medium text-white flex gap-4 items-center text-lg">
-                  {isEditing ? (
-                    <div className="relative group cursor-pointer w-16 h-16 shrink-0 rounded-xl overflow-hidden shadow-md border-2 border-dashed border-white/20 hover:border-primary/50 transition-colors">
-                      <img src={editFile ? URL.createObjectURL(editFile) : product.image_url || "https://placehold.co/100x100"} alt="" className="w-full h-full object-cover opacity-30 transition-opacity group-hover:opacity-10" />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <Upload size={18} className="text-white mb-1" />
-                        <span className="text-[9px] uppercase font-bold text-white tracking-wider">Subir</span>
+
+      {/* ======= MOBILE CARD LIST (shown only on small screens) ======= */}
+      <div className="block md:hidden space-y-4">
+        {filteredProducts.length === 0 && (
+          <p className="text-gray-500 text-center py-10">No hay productos.</p>
+        )}
+        {filteredProducts.map((product) => {
+          const isEditing = editingId === product.id;
+          return (
+            <div key={product.id} className="bg-card border border-white/5 rounded-2xl p-4 shadow-lg">
+              <div className="flex gap-4">
+                {/* Image */}
+                {isEditing ? (
+                  <div className="relative group cursor-pointer w-20 h-20 shrink-0 rounded-xl overflow-hidden shadow-md border-2 border-dashed border-white/20 hover:border-primary/50 transition-colors">
+                    <img src={editFile ? URL.createObjectURL(editFile) : product.image_url || "https://placehold.co/100x100"} alt="" className="w-full h-full object-cover opacity-30 group-hover:opacity-10" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      <Upload size={18} className="text-white mb-1" />
+                      <span className="text-[9px] uppercase font-bold text-white tracking-wider">Subir</span>
+                    </div>
+                    <input type="file" accept="image/*" onChange={(e) => setEditFile(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                  </div>
+                ) : (
+                  product.image_url ? (
+                    <img src={product.image_url} alt="" className="w-20 h-20 object-cover rounded-xl shadow-md border border-white/10 shrink-0" />
+                  ) : (
+                    <div className="w-20 h-20 rounded-xl bg-white/5 border border-white/10 shrink-0" />
+                  )
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-white text-sm mb-1 leading-snug">{product.name}</p>
+                  <span className="text-xs bg-white/5 border border-white/10 px-2 py-0.5 rounded-full text-gray-400">{product.category}</span>
+                </div>
+                {/* Actions when NOT editing */}
+                {!isEditing && (
+                  <div className="flex flex-col gap-2 shrink-0">
+                    <button onClick={() => handleEdit(product)} className="p-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-gray-300 transition-colors"><Edit2 size={16} /></button>
+                    <button onClick={() => { setDeleteModalId(product.id); setDeleteModalName(product.name); }} className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/10 rounded-full text-red-500 transition-colors"><Trash2 size={16} /></button>
+                  </div>
+                )}
+              </div>
+
+              {/* Edit mode fields */}
+              {isEditing ? (
+                <div className="mt-4 space-y-3 border-t border-white/5 pt-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1 font-medium">Precio USD</p>
+                      <CustomNumberInput value={editForm.price_usd} onChangeValue={(val) => setEditForm({...editForm, price_usd: Number(val)})} step={0.01} min={0} prefixSymbol="$" className="w-full" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1 font-medium">Stock</p>
+                      <CustomNumberInput value={editForm.stock} onChangeValue={(val) => setEditForm({...editForm, stock: Number(val)})} step={1} min={0} className="w-full" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1 font-medium">Categoría</p>
+                    <CustomSelect value={editForm.category} onChange={(val) => setEditForm({...editForm, category: val})} options={PRODUCT_CATEGORIES.map(cat => ({ value: cat, label: cat }))} className="w-full rounded-xl z-20" />
+                  </div>
+                  <div className="flex gap-3 pt-1">
+                    <button onClick={() => setEditingId(null)} className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-gray-400 transition-colors flex items-center justify-center gap-2 text-sm font-medium"><X size={16}/> Cancelar</button>
+                    <button disabled={isUploading} onClick={() => handleSave(product.id, product.image_url)} className="flex-1 py-2.5 bg-primary/10 border border-primary/30 hover:bg-primary/20 rounded-xl text-primary font-bold transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50">
+                      <Save size={16} className={isUploading ? "animate-pulse" : ""}/> Guardar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+                  <span className="text-lg font-bold text-white">${product.price_usd.toFixed(2)}</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${product.stock > 0 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                    Stock: {product.stock}
+                  </span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ======= DESKTOP TABLE (shown only on md+) ======= */}
+      <div className="hidden md:block bg-card border border-white/5 shadow-2xl rounded-2xl overflow-hidden">
+        <table className="w-full text-left text-base text-gray-300">
+          <thead className="bg-[#0a0a0a] text-gray-400 border-b border-white/5 uppercase tracking-wider text-xs">
+            <tr>
+              <th className="px-6 py-5 font-semibold">Producto</th>
+              <th className="px-6 py-5 font-semibold">Categoría</th>
+              <th className="px-6 py-5 font-semibold">Precio (USD)</th>
+              <th className="px-6 py-5 font-semibold">Stock</th>
+              <th className="px-6 py-5 font-semibold text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {filteredProducts.map((product) => {
+              const isEditing = editingId === product.id;
+              return (
+                <tr key={product.id} className="hover:bg-white/5 transition-colors">
+                  <td className="px-6 py-5 font-medium text-white flex gap-4 items-center text-lg">
+                    {isEditing ? (
+                      <div className="relative group cursor-pointer w-16 h-16 shrink-0 rounded-xl overflow-hidden shadow-md border-2 border-dashed border-white/20 hover:border-primary/50 transition-colors">
+                        <img src={editFile ? URL.createObjectURL(editFile) : product.image_url || "https://placehold.co/100x100"} alt="" className="w-full h-full object-cover opacity-30 transition-opacity group-hover:opacity-10" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                          <Upload size={18} className="text-white mb-1" />
+                          <span className="text-[9px] uppercase font-bold text-white tracking-wider">Subir</span>
+                        </div>
+                        <input type="file" accept="image/*" onChange={(e) => setEditFile(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                       </div>
-                      <input type="file" accept="image/*" onChange={(e) => setEditFile(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                    </div>
-                  ) : (
-                    product.image_url && <img src={product.image_url} alt="" className="w-16 h-16 object-cover rounded-xl shadow-md border border-white/10 shrink-0" />
-                  )}
-                  <span className="truncate max-w-[200px] xl:max-w-xs">{product.name}</span>
-                </td>
-                <td className="px-6 py-5">
-                  {isEditing ? (
-                    <CustomSelect 
-                      value={editForm.category} 
-                      onChange={(val) => setEditForm({...editForm, category: val})}
-                      options={PRODUCT_CATEGORIES.map(cat => ({ value: cat, label: cat }))}
-                      className="w-48 rounded-xl z-20"
-                    />
-                  ) : (
-                    <span className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-sm font-medium">{product.category}</span>
-                  )}
-                </td>
-                <td className="px-6 py-5">
-                  {isEditing ? (
-                    <CustomNumberInput 
-                      value={editForm.price_usd} 
-                      onChangeValue={(val) => setEditForm({...editForm, price_usd: Number(val)})} 
-                      step={0.01} 
-                      min={0}
-                      prefixSymbol="$"
-                      className="w-32 z-10"
-                    />
-                  ) : (
-                    <span className="font-semibold text-lg text-white">${product.price_usd.toFixed(2)}</span>
-                  )}
-                </td>
-                <td className="px-6 py-5">
-                  {isEditing ? (
-                    <CustomNumberInput 
-                      value={editForm.stock} 
-                      onChangeValue={(val) => setEditForm({...editForm, stock: Number(val)})} 
-                      step={1} 
-                      min={0}
-                      className="w-24 z-10"
-                    />
-                  ) : (
-                    <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-sm border ${product.stock > 0 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
-                      {product.stock}
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-5 text-right">
-                  {isEditing ? (
-                    <div className="flex justify-end gap-3">
-                      <button onClick={() => setEditingId(null)} className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full text-gray-400 transition-colors shadow-sm"><X size={20} /></button>
-                      <button disabled={isUploading} onClick={() => handleSave(product.id, product.image_url)} className="p-2.5 bg-primary/10 border border-primary/30 hover:bg-primary/20 hover:border-primary/50 disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-primary transition-all shadow-[0_0_10px_rgba(250,204,21,0.2)]">
-                        <Save size={20} className={isUploading ? "animate-pulse" : ""} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex justify-end gap-3">
-                      <button onClick={() => { setDeleteModalId(product.id); setDeleteModalName(product.name); }} className="p-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/10 hover:border-red-500/30 rounded-full text-red-500 transition-colors shadow-sm"><Trash2 size={20} /></button>
-                      <button onClick={() => handleEdit(product)} className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-full text-gray-300 transition-colors shadow-sm"><Edit2 size={20} /></button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-          {products.length === 0 && (
-            <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No hay productos registrados.</td></tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+                    ) : (
+                      product.image_url && <img src={product.image_url} alt="" className="w-16 h-16 object-cover rounded-xl shadow-md border border-white/10 shrink-0" />
+                    )}
+                    <span className="truncate max-w-[200px] xl:max-w-xs">{product.name}</span>
+                  </td>
+                  <td className="px-6 py-5">
+                    {isEditing ? (
+                      <CustomSelect 
+                        value={editForm.category} 
+                        onChange={(val) => setEditForm({...editForm, category: val})}
+                        options={PRODUCT_CATEGORIES.map(cat => ({ value: cat, label: cat }))}
+                        className="w-48 rounded-xl z-20"
+                      />
+                    ) : (
+                      <span className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-sm font-medium">{product.category}</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-5">
+                    {isEditing ? (
+                      <CustomNumberInput 
+                        value={editForm.price_usd} 
+                        onChangeValue={(val) => setEditForm({...editForm, price_usd: Number(val)})} 
+                        step={0.01} 
+                        min={0}
+                        prefixSymbol="$"
+                        className="w-32 z-10"
+                      />
+                    ) : (
+                      <span className="font-semibold text-lg text-white">${product.price_usd.toFixed(2)}</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-5">
+                    {isEditing ? (
+                      <CustomNumberInput 
+                        value={editForm.stock} 
+                        onChangeValue={(val) => setEditForm({...editForm, stock: Number(val)})} 
+                        step={1} 
+                        min={0}
+                        className="w-24 z-10"
+                      />
+                    ) : (
+                      <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-sm border ${product.stock > 0 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                        {product.stock}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-5 text-right">
+                    {isEditing ? (
+                      <div className="flex justify-end gap-3">
+                        <button onClick={() => setEditingId(null)} className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full text-gray-400 transition-colors shadow-sm"><X size={20} /></button>
+                        <button disabled={isUploading} onClick={() => handleSave(product.id, product.image_url)} className="p-2.5 bg-primary/10 border border-primary/30 hover:bg-primary/20 hover:border-primary/50 disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-primary transition-all shadow-[0_0_10px_rgba(250,204,21,0.2)]">
+                          <Save size={20} className={isUploading ? "animate-pulse" : ""} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex justify-end gap-3">
+                        <button onClick={() => { setDeleteModalId(product.id); setDeleteModalName(product.name); }} className="p-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/10 hover:border-red-500/30 rounded-full text-red-500 transition-colors shadow-sm"><Trash2 size={20} /></button>
+                        <button onClick={() => handleEdit(product)} className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-full text-gray-300 transition-colors shadow-sm"><Edit2 size={20} /></button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+            {products.length === 0 && (
+              <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No hay productos registrados.</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

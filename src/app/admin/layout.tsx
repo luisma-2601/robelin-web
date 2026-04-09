@@ -31,11 +31,11 @@ export default async function AdminLayout({
 
   return (
     <div className="flex h-screen bg-black text-foreground">
-      {/* Sidebar */}
+      {/* Sidebar (desktop only — mobile uses fixed bottom nav in AdminSidebar) */}
       <AdminSidebar />
       
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 pt-[4.5rem] md:pt-8 pb-24 md:pb-8">
         {children}
       </main>
     </div>

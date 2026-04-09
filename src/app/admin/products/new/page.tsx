@@ -74,17 +74,17 @@ export default function NewProduct() {
       </Link>
       <h1 className="text-3xl font-bold text-white mb-6 text-center">Nuevo Producto</h1>
       
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 bg-card border border-border p-8 md:p-12 rounded-2xl shadow-2xl">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="col-span-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-card border border-border p-5 sm:p-8 md:p-12 rounded-2xl shadow-2xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="col-span-full">
             <label className="block text-sm font-medium text-gray-400 mb-2">Nombre</label>
-            <input {...register("name")} className="w-full bg-black border border-border rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary" />
+            <input {...register("name")} className="w-full bg-black border border-border rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" />
             {errors.name && <span className="text-red-400 text-xs mt-1 block">{errors.name.message}</span>}
           </div>
           
-          <div className="col-span-2">
+          <div className="col-span-full">
             <label className="block text-sm font-medium text-gray-400 mb-2">Descripción</label>
-            <textarea {...register("description")} className="w-full bg-black border border-border rounded-lg px-4 py-2 text-white h-24 focus:outline-none focus:border-primary" />
+            <textarea {...register("description")} className="w-full bg-black border border-border rounded-lg px-4 py-3 text-white h-24 focus:outline-none focus:border-primary" />
           </div>
 
           <div>
