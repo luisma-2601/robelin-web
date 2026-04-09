@@ -20,7 +20,37 @@ export default function HeroCarousel({ products }: { products: Product[] }) {
   if (carouselProducts.length === 0) return null;
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] rounded-[30px] overflow-hidden mb-20 border border-white/5 shadow-[0_0_50px_rgba(250,204,21,0.1)] group">
+    <div className="mb-20">
+      {/* ── Top 5 Label ── */}
+      <div className="flex items-center justify-between mb-4 px-1">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            {[1,2,3,4,5].map((n) => (
+              <span
+                key={n}
+                className={`inline-flex items-center justify-center font-black text-[11px] rounded-full border transition-all duration-300 ${
+                  n === currentIndex + 1
+                    ? "w-7 h-7 bg-primary text-black border-primary shadow-[0_0_12px_rgba(250,204,21,0.5)]"
+                    : "w-6 h-6 bg-white/5 text-gray-500 border-white/10"
+                }`}
+              >
+                {n}
+              </span>
+            ))}
+          </div>
+          <div>
+            <p className="text-white font-bold text-base leading-none">Top 5 Más Vendidos</p>
+            <p className="text-gray-500 text-xs mt-0.5">Los productos favoritos de nuestros clientes</p>
+          </div>
+        </div>
+        <span className="hidden sm:flex items-center gap-1.5 text-xs text-gray-500 border border-white/5 px-3 py-1.5 rounded-full bg-white/3">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+          Desliza automáticamente
+        </span>
+      </div>
+
+      {/* ── Carousel ── */}
+      <div className="relative w-full h-[500px] md:h-[600px] rounded-[30px] overflow-hidden border border-white/5 shadow-[0_0_50px_rgba(250,204,21,0.1)] group">
       {carouselProducts.map((product, index) => (
         <div
           key={product.id}
@@ -74,6 +104,7 @@ export default function HeroCarousel({ products }: { products: Product[] }) {
             aria-label={`Ir a la foto ${index + 1}`}
           />
         ))}
+      </div>
       </div>
     </div>
   );
