@@ -77,7 +77,7 @@ export default function CustomNumberInput({
         max={max}
         {...props}
         className={`w-full bg-[#111] border border-white/10 hover:border-white/20 rounded-xl ${
-          prefixSymbol ? "pl-8" : "pl-4"
+          !prefixSymbol ? "pl-4" : prefixSymbol.length <= 1 ? "pl-8" : prefixSymbol.length <= 2 ? "pl-10" : "pl-14"
         } pr-10 py-3 text-base text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
       />
       <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col gap-0.5 z-10">
