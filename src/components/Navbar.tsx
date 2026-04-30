@@ -6,12 +6,14 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
+import { createPortal } from "react-dom";
 
 export default function Navbar() {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const items = useCartStore((state) => state.items);
   const [mounted, setMounted] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const supabase = createClient();
   const pathname = usePathname();
 
@@ -80,7 +82,7 @@ export default function Navbar() {
                   </>
                 )}
                 <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
-                <button onClick={handleLogout} className="text-gray-400 hover:text-red-400 transition-colors">
+                <button onClick={() => setShowLogoutModal(true)} className="text-gray-400 hover:text-red-400 transition-colors">
                   <LogOut size={16} />
                 </button>
               </div>
@@ -92,6 +94,33 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {mounted && showLogoutModal && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-[#111] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-2">Cerrar Sesión</h3>
+            <p className="text-gray-400 text-sm mb-6">¿Estás seguro de que deseas cerrar sesión?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors border border-white/10"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  setShowLogoutModal(false);
+                  handleLogout();
+                }}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-500 text-sm font-medium transition-colors border border-red-500/30"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </nav>
   );
 }

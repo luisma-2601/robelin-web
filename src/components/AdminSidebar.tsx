@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Settings, Package, ShoppingBag, LogOut, Home } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -15,6 +17,12 @@ const navItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const supabase = createClient();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -66,7 +74,7 @@ export default function AdminSidebar() {
             <span>Ver Tienda</span>
           </Link>
           <button
-            onClick={handleLogout}
+            onClick={() => setShowLogoutModal(true)}
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-red-400 hover:bg-red-500/5 transition-all duration-200 w-full text-left text-sm font-medium"
           >
             <LogOut size={16} />
@@ -96,7 +104,7 @@ export default function AdminSidebar() {
         })}
         {/* Logout as last item */}
         <button
-          onClick={handleLogout}
+          onClick={() => setShowLogoutModal(true)}
           className="flex-1 flex flex-col items-center justify-center py-3 gap-1 text-gray-500 hover:text-red-400 transition-colors"
         >
           <LogOut size={20} strokeWidth={1.5} />
@@ -114,6 +122,34 @@ export default function AdminSidebar() {
         </Link>
         <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold">Admin</span>
       </header>
+
+      {/* Logout Confirmation Modal */}
+      {mounted && showLogoutModal && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-[#111] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-2">Cerrar Sesión</h3>
+            <p className="text-gray-400 text-sm mb-6">¿Estás seguro de que deseas cerrar sesión?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors border border-white/10"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  setShowLogoutModal(false);
+                  handleLogout();
+                }}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-500 text-sm font-medium transition-colors border border-red-500/30"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
