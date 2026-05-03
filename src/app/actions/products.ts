@@ -32,3 +32,40 @@ export async function deleteProductAction(id: string) {
   revalidatePath("/", "layout"); // Purge cache everywhere
   return true;
 }
+
+export async function createProductAction(productData: any) {
+  const supabase = getAdminClient();
+  const { error } = await supabase.from("products").insert(productData);
+  if (error) throw new Error(error.message);
+  
+  revalidatePath("/", "layout");
+  return true;
+}
+
+export async function incrementProductSalesAction(orderId: string) {
+  const supabase = getAdminClient();
+  const { data: items, error: itemsError } = await supabase
+    .from("order_items")
+    .select("product_id, quantity")
+    .eq("order_id", orderId);
+    
+  if (itemsError || !items) throw new Error(itemsError?.message || "Error fetching items");
+
+  for (const item of items) {
+    const { data: product } = await supabase
+      .from("products")
+      .select("sales_count")
+      .eq("id", item.product_id)
+      .single();
+      
+    const currentSales = product?.sales_count || 0;
+    
+    await supabase
+      .from("products")
+      .update({ sales_count: currentSales + item.quantity })
+      .eq("id", item.product_id);
+  }
+  
+  revalidatePath("/", "layout");
+  return true;
+}

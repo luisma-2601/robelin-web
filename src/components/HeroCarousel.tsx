@@ -6,8 +6,11 @@ import { Product } from "@/lib/types";
 export default function HeroCarousel({ products }: { products: Product[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  // Usar solo los primeros 5 productos con foto para el carrusel
-  const carouselProducts = products?.filter(p => p.image_url).slice(0, 5) || [];
+  // Usar los 5 productos más vendidos con foto para el carrusel
+  const carouselProducts = [...(products || [])]
+    .filter(p => p.image_url)
+    .sort((a, b) => (b.sales_count || 0) - (a.sales_count || 0))
+    .slice(0, 5);
 
   useEffect(() => {
     if (carouselProducts.length === 0) return;

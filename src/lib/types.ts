@@ -7,6 +7,7 @@ export interface Product {
   category: string;
   image_url: string;
   created_at: string;
+  sales_count?: number;
 }
 
 export interface Profile {

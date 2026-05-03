@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createProductAction } from "@/app/actions/products";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +27,8 @@ export default function NewProduct() {
   const supabase = createClient();
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) });
   
   const selectedCategory = watch("category");
@@ -44,7 +47,7 @@ export default function NewProduct() {
         .upload(fileName, file);
 
       if (uploadError) {
-        alert("Error subiendo imagen");
+        setErrorMessage("Error subiendo imagen");
         setLoading(false);
         return;
       }
@@ -52,16 +55,14 @@ export default function NewProduct() {
       image_url = publicUrl;
     }
 
-    const { error } = await supabase.from('products').insert({
-      ...data,
-      image_url
-    });
-
-    if (error) {
-      alert("Error: " + error.message);
-    } else {
-      router.push('/admin/products');
-      router.refresh();
+    try {
+      await createProductAction({
+        ...data,
+        image_url
+      });
+      setShowSuccessModal(true);
+    } catch (error: any) {
+      setErrorMessage(error.message || "Ocurrió un error al crear el producto.");
     }
 
     setLoading(false);
@@ -134,6 +135,57 @@ export default function NewProduct() {
           {loading ? "Guardando..." : "Crear Producto"}
         </button>
       </form>
+
+      {/* Error Modal */}
+      {errorMessage && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setErrorMessage(null)} />
+          <div className="relative bg-[#111] border border-white/10 shadow-[0_0_40px_rgba(0,0,0,1)] rounded-2xl p-8 max-w-sm w-full animate-in zoom-in-95 fade-in duration-200">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-6 border border-red-500/20">
+                <AlertCircle size={32} className="text-red-500" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Error</h3>
+              <p className="text-gray-400 mb-8 leading-relaxed">
+                {errorMessage}
+              </p>
+              <button 
+                onClick={() => setErrorMessage(null)} 
+                className="w-full py-3 px-4 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-500 font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)] hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] flex justify-center items-center"
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative bg-[#111] border border-white/10 shadow-[0_0_40px_rgba(0,0,0,1)] rounded-2xl p-8 max-w-sm w-full animate-in zoom-in-95 fade-in duration-200">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-6 border border-green-500/20">
+                <CheckCircle size={32} className="text-green-500" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">¡Producto Creado!</h3>
+              <p className="text-gray-400 mb-8 leading-relaxed">
+                El producto se ha guardado exitosamente en el inventario.
+              </p>
+              <button 
+                onClick={() => {
+                  router.push('/admin/products');
+                  router.refresh();
+                }} 
+                className="w-full py-3 px-4 rounded-xl bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-500 font-bold transition-all shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] flex justify-center items-center"
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

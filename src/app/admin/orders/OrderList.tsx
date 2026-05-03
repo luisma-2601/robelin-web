@@ -3,6 +3,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Order, OrderItem } from "@/lib/types";
 import { ChevronDown, ChevronUp, CheckCircle, Clock } from "lucide-react";
+import { incrementProductSalesAction } from "@/app/actions/products";
 
 export default function OrderList({ initialOrders }: { initialOrders: Order[] }) {
   const [orders, setOrders] = useState(initialOrders);
@@ -14,6 +15,11 @@ export default function OrderList({ initialOrders }: { initialOrders: Order[] })
     if (error) {
       alert("Error: " + error.message);
     } else {
+      try {
+        await incrementProductSalesAction(orderId);
+      } catch (err: any) {
+        console.error("No se pudo sumar al contador de ventas:", err);
+      }
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: 'approved' } : o));
     }
   };
