@@ -54,7 +54,7 @@ export default function Navbar() {
               <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/black-marble.png')] mix-blend-screen"></div>
               <span className="relative z-10">R</span>
             </div>
-            <span className="text-xl font-light tracking-[0.2em] text-white">ROBELIN <span className="text-primary text-sm font-semibold">II</span></span>
+
           </Link>
 
           <div className="flex items-center gap-6">
