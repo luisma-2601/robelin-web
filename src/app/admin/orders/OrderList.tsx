@@ -17,7 +17,7 @@ export default function OrderList({ initialOrders }: { initialOrders: Order[] })
     } else {
       try {
         await incrementProductSalesAction(orderId);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("No se pudo sumar al contador de ventas:", err);
       }
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: 'approved' } : o));

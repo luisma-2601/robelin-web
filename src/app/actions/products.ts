@@ -33,6 +33,7 @@ export async function deleteProductAction(id: string) {
   return true;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createProductAction(productData: any) {
   const supabase = getAdminClient();
   const { error } = await supabase.from("products").insert(productData);

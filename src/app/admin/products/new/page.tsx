@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { ArrowLeft, X, AlertCircle, CheckCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createProductAction } from "@/app/actions/products";
@@ -61,8 +61,8 @@ export default function NewProduct() {
         image_url
       });
       setShowSuccessModal(true);
-    } catch (error: any) {
-      setErrorMessage(error.message || "Ocurrió un error al crear el producto.");
+    } catch (error: unknown) {
+      setErrorMessage(error instanceof Error ? error.message : "Ocurrió un error al crear el producto.");
     }
 
     setLoading(false);
