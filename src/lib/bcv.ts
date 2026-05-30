@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 
 export async function getBcvRate(): Promise<number> {
   const supabase = createClient();
@@ -18,7 +18,15 @@ export async function getBcvRate(): Promise<number> {
     if (response.ok) {
       const bcvData = await response.json();
       if (bcvData.promedio && !isNaN(bcvData.promedio)) {
-        return bcvData.promedio;
+        const newRate = bcvData.promedio;
+        
+        // Actualizar Supabase automáticamente si la tasa cambió
+        if (settings && newRate !== settings.bcv_rate) {
+          const adminSupabase = createAdminClient();
+          await adminSupabase.from("settings").update({ bcv_rate: newRate }).eq("id", 1);
+        }
+        
+        return newRate;
       }
     }
   } catch (error) {
