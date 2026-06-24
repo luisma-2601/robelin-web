@@ -31,6 +31,31 @@ export interface OrderItem {
   };
 }
 
+export interface StoreService {
+  title: string;
+  description: string;
+}
+
+export interface StoreInfo {
+  id: string;
+  about_title: string;
+  about_description: string;
+  mission: string;
+  vision: string;
+  services: StoreService[];
+  updated_at: string;
+}
+
+export interface Offer {
+  id: string;
+  title: string;
+  description: string;
+  badge: string;
+  color: string;
+  active: boolean;
+  created_at: string;
+}
+
 export interface Order {
   id: string;
   user_id: string;

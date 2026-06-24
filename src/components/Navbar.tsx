@@ -57,6 +57,23 @@ export default function Navbar() {
 
           </Link>
 
+          <div className="hidden md:flex items-center gap-1">
+            {[
+              { label: "Ofertas", href: "/#ofertas" },
+              { label: "Catálogo", href: "/#catalogo" },
+              { label: "Nosotros", href: "/#nosotros" },
+              { label: "Horarios", href: "/#horarios" },
+            ].map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/5"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+
           <div className="flex items-center gap-6">
             <Link href="/cart" className="relative text-gray-400 hover:text-white transition-colors bg-white/5 p-2 rounded-full border border-white/5">
               <ShoppingCart size={20} />

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Settings, Package, ShoppingBag, LogOut, Home } from "lucide-react";
+import { LayoutDashboard, Settings, Package, ShoppingBag, LogOut, Home, Percent, Store } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -10,6 +10,8 @@ import { createPortal } from "react-dom";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Inventario", icon: Package },
+  { href: "/admin/offers", label: "Ofertas", icon: Percent },
+  { href: "/admin/store-info", label: "Info Tienda", icon: Store },
   { href: "/admin/orders", label: "Pedidos", icon: ShoppingBag },
   { href: "/admin/settings", label: "Config", icon: Settings },
 ];
