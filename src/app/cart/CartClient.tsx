@@ -66,9 +66,9 @@ export default function CartClient({ bcvRate }: { bcvRate: number }) {
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-20 bg-card border border-border rounded-2xl">
-        <h2 className="text-2xl font-bold text-white mb-4">Tu carrito está vacío</h2>
-        <p className="text-gray-400 mb-8">Agrega algunos productos exclusivos para continuar.</p>
+      <div className="text-center py-20 px-6 sm:px-10 bg-card border border-border rounded-2xl">
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">Tu carrito está vacío</h2>
+        <p className="text-gray-400 mb-8 text-sm sm:text-base">Agrega algunos productos exclusivos para continuar.</p>
         <Link href="/" className="inline-block bg-primary/10 text-primary border border-primary/30 font-semibold px-8 py-3 rounded-xl hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(250,204,21,0.2)] transition-all backdrop-blur-md">
           Explorar Catálogo
         </Link>

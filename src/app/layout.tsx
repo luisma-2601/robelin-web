@@ -27,7 +27,9 @@ export default function RootLayout({
         
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
-          {children}
+          <div className="animate-page-enter">
+            {children}
+          </div>
           <WhatsAppButton />
         </div>
       </body>

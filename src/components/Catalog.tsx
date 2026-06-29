@@ -4,12 +4,15 @@ import { useState } from "react";
 import ProductCard from "./ProductCard";
 import { Product } from "@/lib/types";
 import { PRODUCT_CATEGORIES } from "@/lib/constants";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, ChevronDown } from "lucide-react";
 import Link from "next/link";
+
+const INITIAL_COUNT = 8;
 
 export default function Catalog({ products, bcvRate, isAdmin }: { products: Product[], bcvRate: number, isAdmin?: boolean }) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAll, setShowAll] = useState(false);
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
@@ -87,10 +90,22 @@ export default function Catalog({ products, bcvRate, isAdmin }: { products: Prod
             </div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
+            {(showAll || searchQuery || selectedCategory ? filteredProducts : filteredProducts.slice(0, INITIAL_COUNT)).map((product) => (
               <ProductCard key={product.id} product={product} bcvRate={bcvRate} />
             ))}
           </div>
+
+          {!showAll && !searchQuery && !selectedCategory && filteredProducts.length > INITIAL_COUNT && (
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() => setShowAll(true)}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all"
+              >
+                Ver todos los productos ({filteredProducts.length})
+                <ChevronDown size={18} />
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <div className="w-full text-center py-32 bg-[#111]/50 border border-white/5 rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center">

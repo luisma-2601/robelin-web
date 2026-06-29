@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-page-enter {
+  animation: page-enter 0.35s ease-out both;
+}
+
+.animate-page-fade {
+  animation: page-fade 0.3s ease-out both;
+}
+
 @layer base {
   body {
     @apply bg-background text-foreground;

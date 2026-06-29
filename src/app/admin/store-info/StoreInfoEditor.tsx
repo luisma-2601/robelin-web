@@ -55,7 +55,7 @@ export default function StoreInfoEditor({ initialInfo }: { initialInfo: StoreInf
   };
 
   return (
-    <div className="space-y-8 max-w-3xl">
+    <div className="space-y-8 max-w-3xl mx-auto">
       {/* About */}
       <div className="bg-card border border-white/10 rounded-2xl p-5 md:p-6 space-y-4">
         <h3 className="text-lg font-bold text-white">¿Quiénes Somos?</h3>

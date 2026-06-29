@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ShoppingCart, User, LogOut, Star } from "lucide-react";
+import { ShoppingCart, LogOut, Star } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 export default function Navbar() {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userName, setUserName] = useState("");
   const items = useCartStore((state) => state.items);
   const [mounted, setMounted] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -22,8 +23,9 @@ export default function Navbar() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
-        const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
+        const { data: profile } = await supabase.from("profiles").select("role, name, email").eq("id", session.user.id).single();
         if (profile?.role === "admin") setIsAdmin(true);
+        setUserName(profile?.name || profile?.email || session.user.email || "");
       }
     });
 
@@ -85,9 +87,13 @@ export default function Navbar() {
             </Link>
 
             {session ? (
-              <div className="flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-4 py-1.5">
-                <Link href="/profile" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm">
-                  <User size={16} /> <span>Perfil</span>
+              <div className="flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-2 py-1.5">
+                <Link href="/profile" className="group flex items-center gap-2" title="Mi Perfil">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 flex items-center justify-center text-primary text-[11px] font-bold uppercase leading-none tracking-tight group-hover:shadow-[0_0_12px_rgba(250,204,21,0.4)] transition-all">
+                    {userName
+                      ? userName.split(" ").map(w => w[0]).slice(0, 2).join("")
+                      : "?"}
+                  </div>
                 </Link>
                 {isAdmin && (
                   <>

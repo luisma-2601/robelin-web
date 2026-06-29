@@ -114,36 +114,42 @@ export default function OffersManager({ initialOffers }: { initialOffers: Offer[
       )}
 
       {/* Create Button */}
-      {!showCreate && (
-        <button
-          onClick={() => setShowCreate(true)}
-          className="bg-primary hover:bg-primaryHover text-black font-semibold px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
-        >
-          <Plus size={18} /> Nueva Oferta
-        </button>
-      )}
+      <button
+        onClick={() => setShowCreate(true)}
+        className="bg-primary hover:bg-primaryHover text-black font-semibold px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
+      >
+        <Plus size={18} /> Nueva Oferta
+      </button>
 
-      {/* Create Form */}
+      {/* Create Modal */}
       {showCreate && (
-        <div className="bg-card border border-white/10 rounded-2xl p-5 md:p-6 space-y-4">
-          <h3 className="text-lg font-bold text-white">Crear Nueva Oferta</h3>
-          <OfferForm form={createForm} setForm={setCreateForm} />
-          <div className="flex gap-3 pt-2">
-            <button onClick={() => { setShowCreate(false); setCreateForm(EMPTY_FORM); }} className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-gray-400 text-sm font-medium flex items-center justify-center gap-2">
-              <X size={16} /> Cancelar
-            </button>
-            <button onClick={handleCreate} disabled={isLoading || !createForm.title || !createForm.description || !createForm.badge} className="flex-1 py-2.5 bg-primary/10 border border-primary/30 hover:bg-primary/20 rounded-xl text-primary font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
-              {isLoading ? <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <><Save size={16} /> Crear</>}
-            </button>
-          </div>
-
-          {/* Preview */}
-          {createForm.title && (
-            <div className="pt-4 border-t border-white/5">
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3 font-medium">Vista previa</p>
-              <OfferPreviewCard offer={{ ...createForm, active: true }} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setShowCreate(false); setCreateForm(EMPTY_FORM); }} />
+          <div className="relative bg-[#111] border border-white/10 rounded-2xl p-5 md:p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white">Crear Nueva Oferta</h3>
+              <button onClick={() => { setShowCreate(false); setCreateForm(EMPTY_FORM); }} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 transition-colors">
+                <X size={18} />
+              </button>
             </div>
-          )}
+            <OfferForm form={createForm} setForm={setCreateForm} />
+            <div className="flex gap-3 pt-2">
+              <button onClick={() => { setShowCreate(false); setCreateForm(EMPTY_FORM); }} className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-gray-400 text-sm font-medium flex items-center justify-center gap-2">
+                <X size={16} /> Cancelar
+              </button>
+              <button onClick={handleCreate} disabled={isLoading || !createForm.title || !createForm.description || !createForm.badge} className="flex-1 py-2.5 bg-primary/10 border border-primary/30 hover:bg-primary/20 rounded-xl text-primary font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+                {isLoading ? <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <><Save size={16} /> Crear</>}
+              </button>
+            </div>
+
+            {/* Preview */}
+            {createForm.title && (
+              <div className="pt-4 border-t border-white/5">
+                <p className="text-xs text-gray-500 uppercase tracking-widest mb-3 font-medium">Vista previa</p>
+                <OfferPreviewCard offer={{ ...createForm, active: true }} />
+              </div>
+            )}
+          </div>
         </div>
       )}
 

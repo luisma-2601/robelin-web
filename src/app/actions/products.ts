@@ -43,6 +43,56 @@ export async function createProductAction(productData: any) {
   return true;
 }
 
+export async function bulkCreateProductsAction(
+  products: { name: string; description: string; category: string; price_usd: number; stock: number }[]
+) {
+  const supabase = getAdminClient();
+  const { data, error } = await supabase.from("products").insert(products).select();
+  if (error) throw new Error(error.message);
+  revalidatePath("/", "layout");
+  return data?.length || 0;
+}
+
+export async function approveOrderAction(orderId: string) {
+  const supabase = getAdminClient();
+
+  // 1. Update order status
+  const { error: orderError } = await supabase
+    .from("orders")
+    .update({ status: "approved" })
+    .eq("id", orderId);
+  if (orderError) throw new Error(orderError.message);
+
+  // 2. Get order items
+  const { data: items, error: itemsError } = await supabase
+    .from("order_items")
+    .select("product_id, quantity")
+    .eq("order_id", orderId);
+  if (itemsError || !items) throw new Error(itemsError?.message || "Error fetching items");
+
+  // 3. Decrement stock and increment sales_count
+  for (const item of items) {
+    const { data: product } = await supabase
+      .from("products")
+      .select("stock, sales_count")
+      .eq("id", item.product_id)
+      .single();
+
+    if (product) {
+      await supabase
+        .from("products")
+        .update({
+          stock: Math.max(0, (product.stock || 0) - item.quantity),
+          sales_count: (product.sales_count || 0) + item.quantity,
+        })
+        .eq("id", item.product_id);
+    }
+  }
+
+  revalidatePath("/", "layout");
+  return true;
+}
+
 export async function incrementProductSalesAction(orderId: string) {
   const supabase = getAdminClient();
   const { data: items, error: itemsError } = await supabase
