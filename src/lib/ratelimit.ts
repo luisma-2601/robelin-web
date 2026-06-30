@@ -12,9 +12,9 @@ export function rateLimit(key: string, max: number, windowMs: number): boolean {
 
   // Limpiar entradas expiradas periódicamente
   if (store.size > 5000) {
-    for (const [k, v] of store) {
+    store.forEach((v, k) => {
       if (v.resetAt < now) store.delete(k);
-    }
+    });
   }
 
   const entry = store.get(key);
