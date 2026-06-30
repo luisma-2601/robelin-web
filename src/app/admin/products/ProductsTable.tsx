@@ -50,8 +50,19 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
     let newImageUrl = currentImageUrl;
     
     if (editFile) {
-      const fileExt = editFile.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+      if (!ALLOWED_TYPES.includes(editFile.type)) {
+        alert("Tipo de archivo no permitido. Solo se aceptan JPG, PNG o WEBP.");
+        setIsUploading(false);
+        return;
+      }
+      if (editFile.size > 5 * 1024 * 1024) {
+        alert("El archivo no puede superar 5MB.");
+        setIsUploading(false);
+        return;
+      }
+      const fileExt = editFile.type.split("/")[1];
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
       const { error: uploadError } = await supabase.storage.from('product-images').upload(fileName, editFile);
       if (!uploadError) {
         const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);

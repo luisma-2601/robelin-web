@@ -9,6 +9,7 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [cedula, setCedula] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("Distrito Capital (Caracas)");
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export default function AuthPage() {
       } else if (data.user) {
         // Insert profile via server action to bypass client RLS issues during signup
         const { createProfile } = await import("@/app/actions/auth");
-        const res = await createProfile(data.user.id, name, phone, city, email);
+        const res = await createProfile(data.user.id, name, phone, city, email, cedula);
         
         if (res.error) {
           setError(res.error);
@@ -85,6 +86,10 @@ export default function AuthPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Nombre Completo</label>
                 <input required type="text" value={name} onChange={e => setName(e.target.value)} className="w-full bg-black border border-border rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Cédula de Identidad</label>
+                <input required type="text" placeholder="V-12345678" value={cedula} onChange={e => setCedula(e.target.value)} className="w-full bg-black border border-border rounded-lg px-4 py-3 text-white focus:border-primary focus:outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Teléfono</label>

@@ -1,6 +1,7 @@
 "use client";
 import { useCartStore } from "@/store/cartStore";
 import { createClient } from "@/lib/supabase/client";
+import { createOrderAction } from "@/app/actions/orders";
 import { useRouter } from "next/navigation";
 import { Trash2, Plus, Minus, ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -24,38 +25,19 @@ export default function CartClient({ bcvRate }: { bcvRate: number }) {
       return;
     }
 
-    // Usaremos un try catch por confiabilidad
     try {
-      // 1. Crear Orden
-      const { data: order, error: orderError } = await supabase.from("orders").insert({
-        user_id: session.user.id,
-        total_usd: totalUsd,
-        total_ves: totalVes,
-        status: "pending"
-      }).select().single();
+      // Crear orden con precios validados en servidor (nunca confiar en precios del cliente)
+      const cartPayload = items.map(i => ({ id: i.id, quantity: i.quantity }));
+      const order = await createOrderAction(cartPayload, bcvRate);
 
-      if (orderError) throw orderError;
-
-      // 2. Insertar Items
-      const orderItemsData = items.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        quantity: item.quantity,
-        price_usd_at_purchase: item.price_usd
-      }));
-
-      const { error: itemsError } = await supabase.from("order_items").insert(orderItemsData);
-      if (itemsError) throw itemsError;
-
-      // 3. Clear Cart & redirect to WhatsApp
       clearCart();
-      const adminPhone = "584120000000"; // Reemplazar con el número real de admin
-      let message = `Hola! Quiero confirmar mi pedido #${order.id.split('-')[0]}\n\n`;
-      items.forEach(i => {
-        message += `${i.quantity}x ${i.name} ($${i.price_usd})\n`;
+      const adminPhone = "584120000000";
+      let message = `Hola! Quiero confirmar mi pedido #${order.orderId.split('-')[0]}\n\n`;
+      order.items.forEach(i => {
+        message += `${i.quantity}x ${i.name} ($${i.price_usd.toFixed(2)})\n`;
       });
-      message += `\n*Total a pagar: $${totalUsd.toFixed(2)} USD (Bs. ${totalVes.toFixed(2)})*\n\nPor favor indícame los métodos de pago.`;
-      
+      message += `\n*Total a pagar: $${order.totalUsd.toFixed(2)} USD (Bs. ${order.totalVes.toFixed(2)})*\n\nPor favor indícame los métodos de pago.`;
+
       window.location.href = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Error desconocido";

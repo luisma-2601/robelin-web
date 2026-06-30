@@ -49,8 +49,19 @@ export default function NewProductModal() {
 
     let image_url = null;
     if (file) {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        setError("Tipo de archivo no permitido. Solo se aceptan JPG, PNG o WEBP.");
+        setLoading(false);
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setError("El archivo no puede superar 5MB.");
+        setLoading(false);
+        return;
+      }
+      const fileExt = file.type.split("/")[1];
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
       const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, file);
       if (uploadError) {
         setError("Error subiendo imagen");

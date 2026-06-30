@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import DashboardClient from "./DashboardClient";
 
 export const revalidate = 0;
@@ -44,24 +45,15 @@ export default async function AdminDashboard() {
 
   const lowStockCount = lowStockProducts?.length || 0;
 
-  // Ventas de los últimos 7 días
-  const days: { label: string; total: number }[] = [];
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate()).toISOString();
-    const dayEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1).toISOString();
-
-    const { data: dayOrders } = await supabase
-      .from("orders")
-      .select("total_usd")
-      .eq("status", "approved")
-      .gte("created_at", dayStart)
-      .lt("created_at", dayEnd);
-
-    const dayLabel = date.toLocaleDateString("es", { weekday: "short" });
-    days.push({ label: dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1), total: dayOrders?.reduce((s, o) => s + o.total_usd, 0) || 0 });
-  }
+  // Ventas aprobadas del último año completo
+  const oneYearAgo = new Date(now);
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  const { data: salesOrders } = await supabase
+    .from("orders")
+    .select("created_at, total_usd")
+    .eq("status", "approved")
+    .gte("created_at", oneYearAgo.toISOString())
+    .order("created_at", { ascending: true });
 
   // Top 5 productos más vendidos
   const { data: topProducts } = await supabase
@@ -69,6 +61,19 @@ export default async function AdminDashboard() {
     .select("id, name, image_url, sales_count, price_usd")
     .order("sales_count", { ascending: false })
     .gt("sales_count", 0)
+    .limit(5);
+
+  // Top 5 clientes con más compras (service role para saltarse RLS)
+  const adminClient = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } }
+  );
+  const { data: topCustomers } = await adminClient
+    .from("profiles")
+    .select("id, name, cedula, phone, purchase_count")
+    .order("purchase_count", { ascending: false })
+    .gt("purchase_count", 0)
     .limit(5);
 
   return (
@@ -80,8 +85,9 @@ export default async function AdminDashboard() {
       lowStockCount={lowStockCount}
       lowStockProducts={lowStockProducts || []}
       pendingOrders={pendingOrders || []}
-      salesByDay={days}
+      salesOrders={salesOrders || []}
       topProducts={topProducts || []}
+      topCustomers={topCustomers || []}
     />
   );
 }

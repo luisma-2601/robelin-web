@@ -17,6 +17,8 @@ export interface Profile {
   name?: string;
   phone?: string;
   city?: string;
+  cedula?: string;
+  purchase_count?: number;
 }
 
 export interface OrderItem {
