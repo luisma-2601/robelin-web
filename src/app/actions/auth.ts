@@ -14,7 +14,7 @@ const profileSchema = z.object({
 export async function createProfile(id: string, name: string, phone: string, city: string, email: string, cedula: string) {
   const parsed = profileSchema.safeParse({ id, name, phone, city, email, cedula });
   if (!parsed.success) {
-    const msg = parsed.error.errors[0]?.message || "Datos de registro inválidos.";
+    const msg = parsed.error.issues[0]?.message || "Datos de registro inválidos.";
     return { error: msg };
   }
 
