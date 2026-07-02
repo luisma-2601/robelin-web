@@ -2,9 +2,39 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Plus, Trash2, GripVertical } from "lucide-react";
+import { Save, Plus, Trash2, GripVertical, ChevronDown, Scissors, Sparkles, Star, Heart, ShoppingBag, Tag, Package, Zap, Droplets, Crown, Gem, Palette, Wind, Brush, Users, Award, Clock, Flame, Smile, Shirt, HandHeart, Flower2, Dumbbell, Wand2, ShoppingCart, BadgeCheck, Gift } from "lucide-react";
 import { StoreInfo, StoreService } from "@/lib/types";
 import { upsertStoreInfoAction } from "@/app/actions/store-info";
+
+const ICON_OPTIONS = [
+  { name: "Scissors",    Icon: Scissors,    label: "Tijeras" },
+  { name: "Wand2",       Icon: Wand2,       label: "Varita" },
+  { name: "Brush",       Icon: Brush,       label: "Brocha" },
+  { name: "Palette",     Icon: Palette,     label: "Paleta" },
+  { name: "Wind",        Icon: Wind,        label: "Secado" },
+  { name: "Droplets",    Icon: Droplets,    label: "Hidrat." },
+  { name: "Flower2",     Icon: Flower2,     label: "Flor" },
+  { name: "Sparkles",    Icon: Sparkles,    label: "Brillo" },
+  { name: "Flame",       Icon: Flame,       label: "Calor" },
+  { name: "Smile",       Icon: Smile,       label: "Sonrisa" },
+  { name: "Heart",       Icon: Heart,       label: "Cuidado" },
+  { name: "HandHeart",   Icon: HandHeart,   label: "Atención" },
+  { name: "Crown",       Icon: Crown,       label: "Premium" },
+  { name: "Gem",         Icon: Gem,         label: "Lujo" },
+  { name: "Star",        Icon: Star,        label: "Calidad" },
+  { name: "Award",       Icon: Award,       label: "Premio" },
+  { name: "BadgeCheck",  Icon: BadgeCheck,  label: "Garantía" },
+  { name: "Shirt",       Icon: Shirt,       label: "Ropa" },
+  { name: "ShoppingBag", Icon: ShoppingBag, label: "Compras" },
+  { name: "ShoppingCart",Icon: ShoppingCart,label: "Carrito" },
+  { name: "Tag",         Icon: Tag,         label: "Precio" },
+  { name: "Gift",        Icon: Gift,        label: "Regalo" },
+  { name: "Package",     Icon: Package,     label: "Paquete" },
+  { name: "Users",       Icon: Users,       label: "Clientes" },
+  { name: "Clock",       Icon: Clock,       label: "Horario" },
+  { name: "Dumbbell",    Icon: Dumbbell,    label: "Fuerza" },
+  { name: "Zap",         Icon: Zap,         label: "Energía" },
+];
 
 const DEFAULT_INFO = {
   about_title: "Sobre Nosotros",
@@ -24,6 +54,7 @@ export default function StoreInfoEditor({ initialInfo }: { initialInfo: StoreInf
   });
   const [isLoading, setIsLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [openIconPicker, setOpenIconPicker] = useState<number | null>(null);
   const router = useRouter();
 
   const handleSave = async () => {
@@ -123,35 +154,74 @@ export default function StoreInfoEditor({ initialInfo }: { initialInfo: StoreInf
         )}
 
         <div className="space-y-3">
-          {form.services.map((service, i) => (
-            <div key={i} className="bg-[#0a0a0a] border border-white/5 rounded-xl p-4 space-y-3">
-              <div className="flex items-start gap-3">
-                <GripVertical size={16} className="text-gray-600 mt-2.5 shrink-0" />
-                <div className="flex-1 space-y-3">
-                  <input
-                    type="text"
-                    value={service.title}
-                    onChange={(e) => updateService(i, "title", e.target.value)}
-                    placeholder="Nombre del servicio"
-                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
-                  />
-                  <textarea
-                    value={service.description}
-                    onChange={(e) => updateService(i, "description", e.target.value)}
-                    placeholder="Describe este servicio..."
-                    rows={2}
-                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent resize-none"
-                  />
+          {form.services.map((service, i) => {
+            const selectedIcon = ICON_OPTIONS.find(o => o.name === service.icon);
+            const SelectedIcon = selectedIcon?.Icon;
+            return (
+              <div key={i} className="bg-[#0a0a0a] border border-white/5 rounded-xl p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <GripVertical size={16} className="text-gray-600 mt-2.5 shrink-0" />
+                  <div className="flex-1 space-y-3">
+                    {/* Icon picker */}
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setOpenIconPicker(openIconPicker === i ? null : i)}
+                        className="flex items-center gap-2 w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
+                      >
+                        <div className="w-6 h-6 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                          {SelectedIcon ? <SelectedIcon size={13} className="text-primary" /> : <span className="text-gray-600 text-[10px]">?</span>}
+                        </div>
+                        <span className="text-sm text-gray-400 flex-1 text-left">{selectedIcon?.label || "Seleccionar ícono"}</span>
+                        <ChevronDown size={14} className={`text-gray-500 transition-transform ${openIconPicker === i ? "rotate-180" : ""}`} />
+                      </button>
+                      {openIconPicker === i && (
+                        <div className="mt-2 p-2 bg-[#111] border border-white/10 rounded-xl">
+                          <div className="grid grid-cols-9 gap-1">
+                            {ICON_OPTIONS.map(({ name, Icon, label }) => (
+                              <button
+                                key={name}
+                                type="button"
+                                title={label}
+                                onClick={() => { updateService(i, "icon", name); setOpenIconPicker(null); }}
+                                className={`p-2 rounded-lg transition-all flex items-center justify-center ${
+                                  service.icon === name
+                                    ? "bg-primary/20 border border-primary/50 text-primary"
+                                    : "bg-white/5 border border-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300"
+                                }`}
+                              >
+                                <Icon size={15} />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={service.title}
+                      onChange={(e) => updateService(i, "title", e.target.value)}
+                      placeholder="Nombre del servicio"
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
+                    />
+                    <textarea
+                      value={service.description}
+                      onChange={(e) => updateService(i, "description", e.target.value)}
+                      placeholder="Describe este servicio..."
+                      rows={2}
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent resize-none"
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeService(i)}
+                    className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/10 rounded-lg text-red-500 transition-colors shrink-0"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
-                <button
-                  onClick={() => removeService(i)}
-                  className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/10 rounded-lg text-red-500 transition-colors shrink-0"
-                >
-                  <Trash2 size={14} />
-                </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

@@ -61,6 +61,26 @@ export async function createProductAction(productData: any) {
   return true;
 }
 
+export async function bulkUpdateProductsAction(
+  updates: { id: string; price_usd?: number; stock?: number }[]
+) {
+  await assertAdmin();
+  const supabase = getAdminClient();
+
+  const results = await Promise.allSettled(
+    updates.map(({ id, price_usd, stock }) => {
+      const patch: Record<string, number> = {};
+      if (price_usd !== undefined) patch.price_usd = price_usd;
+      if (stock !== undefined) patch.stock = stock;
+      return supabase.from("products").update(patch).eq("id", id);
+    })
+  );
+
+  const failed = results.filter(r => r.status === "rejected").length;
+  revalidatePath("/", "layout");
+  return { updated: updates.length - failed, failed };
+}
+
 export async function bulkCreateProductsAction(
   products: { name: string; description: string; category: string; price_usd: number; stock: number }[]
 ) {
@@ -125,6 +145,18 @@ export async function approveOrderAction(orderId: string) {
     }
   }
 
+  revalidatePath("/", "layout");
+  return true;
+}
+
+export async function rejectOrderAction(orderId: string) {
+  await assertAdmin();
+  const supabase = getAdminClient();
+  const { error } = await supabase
+    .from("orders")
+    .update({ status: "rejected" })
+    .eq("id", orderId);
+  if (error) throw new Error(error.message);
   revalidatePath("/", "layout");
   return true;
 }

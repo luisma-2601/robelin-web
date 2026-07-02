@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import Providers from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -25,13 +26,15 @@ export default function RootLayout({
           <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-secondary/10 blur-[150px] rounded-full mix-blend-screen opacity-50" />
         </div>
         
-        <div className="relative z-10 flex flex-col min-h-screen">
-          <Navbar />
-          <div className="animate-page-enter">
-            {children}
+        <Providers>
+          <div className="relative z-10 flex flex-col min-h-screen">
+            <Navbar />
+            <div className="animate-page-enter">
+              {children}
+            </div>
+            <WhatsAppButton />
           </div>
-          <WhatsAppButton />
-        </div>
+        </Providers>
       </body>
     </html>
   );

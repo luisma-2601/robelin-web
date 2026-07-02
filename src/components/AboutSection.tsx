@@ -1,9 +1,14 @@
 "use client";
 
-import { Store, Target, Eye, Sparkles } from "lucide-react";
+import { Store, Target, Eye, Sparkles, Scissors, Star, Heart, ShoppingBag, Tag, Package, Zap, Droplets, Crown, Gem, Palette, Wind, Brush, Users, Award, Clock, Flame, Smile, Shirt, HandHeart, Flower2, Dumbbell, Wand2, ShoppingCart, BadgeCheck, Gift, type LucideIcon } from "lucide-react";
 import { StoreInfo } from "@/lib/types";
 
-const SERVICE_ICONS = [Sparkles, Target, Eye, Store, Sparkles, Target];
+const ICON_MAP: Record<string, LucideIcon> = {
+  Scissors, Wand2, Brush, Palette, Wind, Droplets, Flower2, Sparkles, Flame,
+  Smile, Heart, HandHeart, Crown, Gem, Star, Award, BadgeCheck, Shirt,
+  ShoppingBag, ShoppingCart, Tag, Gift, Package, Users, Clock, Dumbbell, Zap,
+  Store, Target, Eye,
+};
 
 export default function AboutSection({ info }: { info: StoreInfo | null }) {
   if (!info) return null;
@@ -71,7 +76,7 @@ export default function AboutSection({ info }: { info: StoreInfo | null }) {
           </h3>
           <div className={`grid grid-cols-1 gap-4 ${info.services.length === 1 ? "sm:grid-cols-1 max-w-md" : info.services.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
             {info.services.map((service, i) => {
-              const Icon = SERVICE_ICONS[i % SERVICE_ICONS.length];
+              const Icon = (service.icon && ICON_MAP[service.icon]) || Sparkles;
               return (
                 <div
                   key={i}

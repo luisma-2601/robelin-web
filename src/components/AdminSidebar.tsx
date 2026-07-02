@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Settings, Package, ShoppingBag, LogOut, Home, Percent, Store } from "lucide-react";
+import { LayoutDashboard, Settings, Package, ShoppingBag, LogOut, Home, Percent, Store, Images } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -13,6 +13,7 @@ const navItems = [
   { href: "/admin/offers", label: "Ofertas", icon: Percent },
   { href: "/admin/store-info", label: "Info Tienda", icon: Store },
   { href: "/admin/orders", label: "Pedidos", icon: ShoppingBag },
+  { href: "/admin/images", label: "Imágenes", icon: Images },
   { href: "/admin/settings", label: "Config", icon: Settings },
 ];
 

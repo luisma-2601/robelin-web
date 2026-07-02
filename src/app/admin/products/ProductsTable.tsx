@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Edit2, Save, X, Upload, Trash2 } from "lucide-react";
+import { Edit2, Save, X, Upload, Trash2, Search, Info, Copy, Check } from "lucide-react";
 import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import { updateProductAction, deleteProductAction } from "@/app/actions/products";
 import CustomSelect from "@/components/CustomSelect";
@@ -15,11 +15,14 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
   const [editForm, setEditForm] = useState({ price_usd: 0, stock: 0, category: "" });
   const [editFile, setEditFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [filterCategory, setFilterCategory] = useState<string>("All");
   const [sortBy, setSortBy] = useState<string>("name-asc");
   const [deleteModalId, setDeleteModalId] = useState<string | null>(null);
   const [deleteModalName, setDeleteModalName] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [infoPopupId, setInfoPopupId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const supabase = createClient();
   const router = useRouter();
 
@@ -92,7 +95,13 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
     setIsUploading(false);
   };
 
-  const filteredProducts = products.filter(p => filterCategory === "All" || p.category === filterCategory);
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = filterCategory === "All" || p.category === filterCategory;
+    const matchesSearch = !searchQuery ||
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.id.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   filteredProducts.sort((a, b) => {
     switch (sortBy) {
@@ -106,8 +115,36 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
     }
   });
 
+  const handleCopyId = (id: string) => {
+    navigator.clipboard.writeText(id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <div className="space-y-4">
+      {/* ID Info Modal */}
+      {infoPopupId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={() => setInfoPopupId(null)}>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          <div className="relative bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">ID del Producto</h3>
+              <button onClick={() => setInfoPopupId(null)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-500 hover:text-white transition-colors"><X size={16} /></button>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+              <span className="font-mono text-xs text-gray-300 break-all select-all">{infoPopupId}</span>
+              <button
+                onClick={() => handleCopyId(infoPopupId)}
+                className="shrink-0 p-2 rounded-lg bg-white/5 hover:bg-primary/10 border border-white/10 hover:border-primary/30 text-gray-400 hover:text-primary transition-all"
+              >
+                {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Delete Confirmation Modal */}
       {deleteModalId && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -143,8 +180,23 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
       )}
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row justify-end gap-3 mb-2">
-        <CustomSelect 
+      <div className="flex flex-col sm:flex-row items-center gap-3 mb-2">
+        <div className="relative flex-1 w-full">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" style={{marginTop: 0}} />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar producto por nombre..."
+            className="w-full pl-11 pr-9 py-2.5 bg-[#111] border border-white/10 rounded-full text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        <CustomSelect
           value={sortBy} 
           onChange={setSortBy}
           options={[
@@ -196,7 +248,10 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
                   )
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white text-sm mb-1 leading-snug">{product.name}</p>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <p className="font-semibold text-white text-sm leading-snug">{product.name}</p>
+                    <button onClick={() => { setInfoPopupId(product.id); setCopied(false); }} className="p-0.5 text-gray-600 hover:text-gray-400 transition-colors shrink-0"><Info size={13} /></button>
+                  </div>
                   <span className="text-xs bg-white/5 border border-white/10 px-2 py-0.5 rounded-full text-gray-400">{product.category}</span>
                 </div>
                 {/* Actions when NOT editing */}
@@ -275,11 +330,14 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
                     ) : (
                       product.image_url && <img src={product.image_url} alt="" className="w-16 h-16 object-cover rounded-xl shadow-md border border-white/10 shrink-0" />
                     )}
-                    <span className="truncate max-w-[200px] xl:max-w-xs">{product.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="truncate max-w-[200px] xl:max-w-xs">{product.name}</span>
+                      <button onClick={() => { setInfoPopupId(product.id); setCopied(false); }} className="p-1 text-gray-600 hover:text-gray-400 transition-colors shrink-0"><Info size={14} /></button>
+                    </div>
                   </td>
                   <td className="px-6 py-5">
                     {isEditing ? (
-                      <CustomSelect 
+                      <CustomSelect
                         value={editForm.category} 
                         onChange={(val) => setEditForm({...editForm, category: val})}
                         options={PRODUCT_CATEGORIES.map(cat => ({ value: cat, label: cat }))}

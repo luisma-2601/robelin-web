@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import ProductsTable from "./ProductsTable";
 import BulkImport from "./BulkImport";
+import BulkUpdate from "./BulkUpdate";
 import NewProductModal from "./NewProductModal";
 
 export const revalidate = 0;
@@ -14,6 +15,7 @@ export default async function ProductsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold text-white">Inventario</h1>
         <div className="flex items-center gap-3">
+          <BulkUpdate products={products || []} />
           <BulkImport />
           <NewProductModal />
         </div>
