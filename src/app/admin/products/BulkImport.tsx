@@ -125,9 +125,10 @@ Esmalte Rojo,Esmalte de uñas color rojo,Manicura,5.00,50`;
     return (
       <button
         onClick={() => setOpen(true)}
-        className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-medium px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors"
+        className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-medium px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors"
+        title="Importar CSV"
       >
-        <FileSpreadsheet size={18} /> Importar CSV
+        <FileSpreadsheet size={18} /><span className="hidden sm:inline">Importar CSV</span>
       </button>
     );
   }

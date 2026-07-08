@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Settings, Package, ShoppingBag, LogOut, Home, Percent, Store, Images } from "lucide-react";
+import { LayoutDashboard, Settings, Package, ShoppingBag, LogOut, Home, Percent, Store, Images, MoreHorizontal, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -17,10 +17,25 @@ const navItems = [
   { href: "/admin/settings", label: "Config", icon: Settings },
 ];
 
+// Pick the 4 most-used daily items for the mobile bottom bar
+const mobilePrimaryItems = [
+  navItems[0], // Dashboard
+  navItems[1], // Inventario
+  navItems[4], // Pedidos
+  navItems[5], // Imágenes
+];
+// The rest go into "Más"
+const mobileMoreItems = [
+  navItems[2], // Ofertas
+  navItems[3], // Info Tienda
+  navItems[6], // Config
+];
+
 export default function AdminSidebar() {
   const pathname = usePathname();
   const supabase = createClient();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showMore, setShowMore] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -87,33 +102,88 @@ export default function AdminSidebar() {
       </aside>
 
       {/* ========= MOBILE BOTTOM NAV BAR ========= */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/10 flex items-stretch safe-area-bottom">
-        {navItems.map((item) => {
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/10 flex items-stretch">
+        {mobilePrimaryItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors ${
+              onClick={() => setShowMore(false)}
+              className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors relative ${
                 isActive ? "text-primary" : "text-gray-500"
               }`}
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-              <span className="text-[10px] font-medium">{item.label}</span>
-              {isActive && <span className="absolute bottom-0 w-8 h-0.5 bg-primary rounded-full" />}
+              <span className="text-[9px] font-medium leading-none">{item.label}</span>
+              {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />}
             </Link>
           );
         })}
-        {/* Logout as last item */}
+        {/* Más button */}
         <button
-          onClick={() => setShowLogoutModal(true)}
-          className="flex-1 flex flex-col items-center justify-center py-3 gap-1 text-gray-500 hover:text-red-400 transition-colors"
+          onClick={() => setShowMore(v => !v)}
+          className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors relative ${
+            showMore ? "text-primary" : "text-gray-500"
+          }`}
         >
-          <LogOut size={20} strokeWidth={1.5} />
-          <span className="text-[10px] font-medium">Salir</span>
+          {showMore ? <X size={20} /> : <MoreHorizontal size={20} strokeWidth={1.5} />}
+          <span className="text-[9px] font-medium leading-none">Más</span>
+          {showMore && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />}
         </button>
       </nav>
+
+      {/* ========= MOBILE "MÁS" DRAWER ========= */}
+      {mounted && showMore && createPortal(
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/50"
+            onClick={() => setShowMore(false)}
+          />
+          <div className="fixed bottom-[57px] left-0 right-0 z-50 bg-[#111] border-t border-white/10 rounded-t-2xl shadow-2xl pb-2">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
+              <span className="text-xs text-gray-500 font-semibold uppercase tracking-widest">Más opciones</span>
+            </div>
+            <div className="divide-y divide-white/5">
+              {mobileMoreItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setShowMore(false)}
+                    className={`flex items-center gap-4 px-5 py-4 transition-colors ${
+                      isActive ? "text-primary bg-primary/5" : "text-gray-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
+                    <span className="text-sm font-medium">{item.label}</span>
+                    {isActive && <span className="ml-auto w-2 h-2 bg-primary rounded-full" />}
+                  </Link>
+                );
+              })}
+              <Link
+                href="/"
+                onClick={() => setShowMore(false)}
+                className="flex items-center gap-4 px-5 py-4 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                <Home size={20} strokeWidth={1.5} />
+                <span className="text-sm font-medium">Ver Tienda</span>
+              </Link>
+              <button
+                onClick={() => { setShowMore(false); setShowLogoutModal(true); }}
+                className="w-full flex items-center gap-4 px-5 py-4 text-gray-400 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+              >
+                <LogOut size={20} strokeWidth={1.5} />
+                <span className="text-sm font-medium">Cerrar Sesión</span>
+              </button>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
 
       {/* Mobile top header bar */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4 h-14">

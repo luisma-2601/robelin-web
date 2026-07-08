@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 const WHATSAPP_NUMBER = "58XXXXXXXXXX"; // Cambiar por el número real
 
 export default function WhatsAppButton() {
   const [hover, setHover] = useState(false);
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <a

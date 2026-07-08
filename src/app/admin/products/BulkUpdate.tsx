@@ -120,9 +120,10 @@ export default function BulkUpdate({ products }: { products: Product[] }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-medium px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors"
+        className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-medium px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors"
+        title="Actualizar CSV"
       >
-        <RefreshCw size={16} /> Actualizar CSV
+        <RefreshCw size={16} /><span className="hidden sm:inline">Actualizar CSV</span>
       </button>
     );
   }

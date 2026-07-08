@@ -26,8 +26,8 @@ export default function HeroCarousel({ products }: { products: Product[] }) {
     <div className="mb-20">
       {/* ── Top 5 Label ── */}
       <div className="flex items-center justify-between mb-4 px-1">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex items-center gap-1 shrink-0">
             {[1,2,3,4,5].map((n) => (
               <span
                 key={n}
@@ -41,9 +41,9 @@ export default function HeroCarousel({ products }: { products: Product[] }) {
               </span>
             ))}
           </div>
-          <div>
-            <p className="text-white font-bold text-base leading-none">Top 5 Más Vendidos</p>
-            <p className="text-gray-500 text-xs mt-0.5">Los productos favoritos de nuestros clientes</p>
+          <div className="min-w-0">
+            <p className="text-white font-bold text-sm sm:text-base leading-none">Top 5 Más Vendidos</p>
+            <p className="text-gray-500 text-xs mt-0.5 hidden sm:block">Los productos favoritos de nuestros clientes</p>
           </div>
         </div>
         <span className="hidden sm:flex items-center gap-1.5 text-xs text-gray-500 border border-white/5 px-3 py-1.5 rounded-full bg-white/3">

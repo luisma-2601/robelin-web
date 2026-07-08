@@ -84,8 +84,8 @@ export default function NewProductModal() {
 
   if (!open) {
     return (
-      <button onClick={() => setOpen(true)} className="bg-primary hover:bg-primaryHover text-black font-semibold px-4 py-2 rounded-lg flex items-center gap-2 text-sm">
-        <Plus size={18} /> Nuevo Producto
+      <button onClick={() => setOpen(true)} className="bg-primary hover:bg-primaryHover text-black font-semibold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 text-sm" title="Nuevo Producto">
+        <Plus size={18} /><span className="hidden sm:inline">Nuevo Producto</span>
       </button>
     );
   }
