@@ -101,7 +101,7 @@ export default function ChatWidget() {
     <>
       {/* ── Chat Panel ── */}
       {open && (
-        <div className="fixed bottom-24 left-4 sm:left-6 z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[500px] flex flex-col rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-[0_8px_50px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="fixed bottom-[5.5rem] left-2 right-2 min-[420px]:left-4 min-[420px]:right-auto min-[420px]:w-[380px] h-[min(500px,calc(100dvh-6rem))] z-50 flex flex-col rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-[0_8px_50px_rgba(0,0,0,0.8)] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-[#111] border-b border-white/10 shrink-0">
             <div className="flex items-center gap-2.5">
@@ -195,7 +195,7 @@ export default function ChatWidget() {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Cerrar chat" : "Abrir chat"}
-        className="fixed bottom-6 left-4 sm:left-6 z-50 w-14 h-14 rounded-full bg-[#111] border border-white/10 hover:border-primary/50 text-white flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_4px_25px_rgba(250,204,21,0.25)] transition-all duration-300 hover:scale-110"
+        className="fixed bottom-6 left-4 z-50 w-14 h-14 rounded-full bg-[#111] border border-white/10 hover:border-primary/50 text-white flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_4px_25px_rgba(250,204,21,0.25)] transition-all duration-300 hover:scale-110"
       >
         {open ? (
           <X size={22} className="text-gray-300" />
