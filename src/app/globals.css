@@ -30,6 +30,24 @@ html {
   animation: page-fade 0.3s ease-out both;
 }
 
+@keyframes chat-msg-from-right {
+  from { opacity: 0; transform: translateX(10px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+
+@keyframes chat-msg-from-left {
+  from { opacity: 0; transform: translateX(-10px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0)     scale(1); }
+}
+
+.animate-chat-user {
+  animation: chat-msg-from-right 0.2s ease-out both;
+}
+
+.animate-chat-bot {
+  animation: chat-msg-from-left 0.2s ease-out both;
+}
+
 @layer base {
   body {
     @apply bg-background text-foreground;

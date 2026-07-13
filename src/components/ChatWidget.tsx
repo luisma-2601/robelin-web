@@ -108,8 +108,13 @@ export default function ChatWidget() {
   return (
     <>
       {/* ── Chat Panel ── */}
-      {open && (
-        <div className="fixed bottom-[5.5rem] left-2 right-2 min-[420px]:left-4 min-[420px]:right-auto min-[420px]:w-[380px] h-[min(500px,calc(100dvh-6rem))] z-50 flex flex-col rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-[0_8px_50px_rgba(0,0,0,0.8)] overflow-hidden">
+      <div
+        className={`fixed bottom-[5.5rem] left-2 right-2 min-[420px]:left-4 min-[420px]:right-auto min-[420px]:w-[380px] h-[min(500px,calc(100dvh-6rem))] z-50 flex flex-col rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-[0_8px_50px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-300 ease-out origin-bottom-left ${
+          open
+            ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+            : "opacity-0 translate-y-3 scale-[0.97] pointer-events-none"
+        }`}
+      >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-[#111] border-b border-white/10 shrink-0">
             <div className="flex items-center gap-2.5">
@@ -143,8 +148,8 @@ export default function ChatWidget() {
                 <div
                   className={`max-w-[82%] px-3.5 py-2.5 text-sm leading-relaxed break-words ${
                     msg.role === "user"
-                      ? "bg-primary text-black font-medium rounded-2xl rounded-br-sm whitespace-pre-wrap"
-                      : "bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-2xl rounded-bl-sm"
+                      ? "bg-primary text-black font-medium rounded-2xl rounded-br-sm whitespace-pre-wrap animate-chat-user"
+                      : "bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-2xl rounded-bl-sm animate-chat-bot"
                   }`}
                   {...(msg.role === "bot"
                     ? { dangerouslySetInnerHTML: { __html: formatBotMessage(msg.text) } }
@@ -187,7 +192,7 @@ export default function ChatWidget() {
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || typing}
-                className="w-10 h-10 rounded-xl bg-primary hover:bg-yellow-400 text-black flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0 shadow-[0_0_15px_rgba(250,204,21,0.2)] hover:shadow-[0_0_20px_rgba(250,204,21,0.4)]"
+                className="w-10 h-10 rounded-xl bg-primary hover:bg-yellow-400 active:scale-90 text-black flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0 shadow-[0_0_15px_rgba(250,204,21,0.2)] hover:shadow-[0_0_20px_rgba(250,204,21,0.4)]"
                 aria-label="Enviar"
               >
                 <Send size={15} />
@@ -197,8 +202,7 @@ export default function ChatWidget() {
               Powered by Robelin Bot
             </p>
           </div>
-        </div>
-      )}
+      </div>
 
       {/* ── Floating Button ── */}
       <button
