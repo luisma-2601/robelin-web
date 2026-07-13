@@ -13,6 +13,14 @@ interface Message {
 const WEBHOOK_URL = "https://server1.luis-automations.click/webhook/chat";
 const SESSION_KEY = "robelin_chat_sid";
 
+function formatBotMessage(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/^\*\s+/gm, "• ")
+    .replace(/\n/g, "<br/>")
+    .replace(/\*/g, "");
+}
+
 function getSessionId(): string {
   let sid = sessionStorage.getItem(SESSION_KEY);
   if (!sid) {
@@ -133,14 +141,15 @@ export default function ChatWidget() {
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[82%] px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words ${
+                  className={`max-w-[82%] px-3.5 py-2.5 text-sm leading-relaxed break-words ${
                     msg.role === "user"
-                      ? "bg-primary text-black font-medium rounded-2xl rounded-br-sm"
+                      ? "bg-primary text-black font-medium rounded-2xl rounded-br-sm whitespace-pre-wrap"
                       : "bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-2xl rounded-bl-sm"
                   }`}
-                >
-                  {msg.text}
-                </div>
+                  {...(msg.role === "bot"
+                    ? { dangerouslySetInnerHTML: { __html: formatBotMessage(msg.text) } }
+                    : { children: msg.text })}
+                />
               </div>
             ))}
 
