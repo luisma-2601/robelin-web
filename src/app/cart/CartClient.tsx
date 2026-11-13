@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Trash2, Plus, Minus, ArrowRight, CheckCircle2, XCircle, MessageCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { WHATSAPP_NUMBER } from "@/lib/constants";
 
 type CheckoutState =
   | { status: "idle" }
@@ -33,9 +34,8 @@ export default function CartClient({ bcvRate }: { bcvRate: number }) {
 
     try {
       const cartPayload = items.map(i => ({ id: i.id, quantity: i.quantity }));
-      const order = await createOrderAction(cartPayload, bcvRate);
+      const order = await createOrderAction(cartPayload);
 
-      const adminPhone = "584120000000";
       const orderCode = order.orderId.split("-")[0].toUpperCase();
       let message = `Hola! Quiero hacer un pedido.\n\n*Código de orden: #${orderCode}*\n\n`;
       order.items.forEach(i => {
@@ -47,7 +47,7 @@ export default function CartClient({ bcvRate }: { bcvRate: number }) {
       setCheckout({
         status: "success",
         orderId: order.orderId.split("-")[0],
-        waUrl: `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`,
+        waUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
         totalUsd: order.totalUsd,
         totalVes: order.totalVes,
       });

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 
-const WHATSAPP_NUMBER = "58XXXXXXXXXX"; // Cambiar por el número real
+import { WHATSAPP_NUMBER } from "@/lib/constants";
 
 export default function WhatsAppButton() {
   const [hover, setHover] = useState(false);

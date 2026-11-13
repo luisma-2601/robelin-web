@@ -10,7 +10,7 @@ interface Message {
   text: string;
 }
 
-const WEBHOOK_URL = "https://server1.luis-automations.click/webhook/chat";
+const WEBHOOK_URL = process.env.NEXT_PUBLIC_CHAT_WEBHOOK_URL ?? "";
 const SESSION_KEY = "robelin_chat_sid";
 
 function formatBotMessage(text: string): string {
@@ -58,7 +58,7 @@ export default function ChatWidget() {
   }, [open]);
 
   // ── Guard: hide on admin pages (after all hooks) ──
-  if (pathname?.startsWith("/admin")) return null;
+  if (pathname?.startsWith("/admin") || !WEBHOOK_URL) return null;
 
   const sendMessage = async () => {
     const text = input.trim();
