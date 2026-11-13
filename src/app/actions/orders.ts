@@ -15,7 +15,7 @@ interface CartItem {
   quantity: number;
 }
 
-export async function createOrderAction(cartItems: CartItem[], bcvRate: number) {
+export async function createOrderAction(cartItems: CartItem[]) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("No autenticado.");
@@ -58,6 +58,14 @@ export async function createOrderAction(cartItems: CartItem[], bcvRate: number) 
     const p = products.find(p => p.id === item.id)!;
     return sum + p.price_usd * item.quantity;
   }, 0);
+  // Tasa BCV desde la BD (nunca confiar en la que envía el cliente)
+  const { data: settings, error: settingsError } = await admin
+    .from("settings")
+    .select("bcv_rate")
+    .eq("id", 1)
+    .single();
+  const bcvRate = Number(settings?.bcv_rate);
+  if (settingsError || !bcvRate || bcvRate <= 0) throw new Error("No se pudo obtener la tasa BCV.");
   const totalVes = totalUsd * bcvRate;
 
   // Crear orden

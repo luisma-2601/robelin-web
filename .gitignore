@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Configuración local del editor/agente
+.claude/
+
+# variables de entorno
+.env
