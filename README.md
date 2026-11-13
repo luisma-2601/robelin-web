@@ -2,7 +2,7 @@
 
 Tienda en línea con panel de administración para **Robelin II**, distribuidora de productos profesionales para salones de belleza y barberías en Caracas, Venezuela. Los clientes navegan el catálogo con precios en **USD y bolívares (tasa BCV actualizada automáticamente)**, arman su carrito y envían el pedido por WhatsApp; el negocio gestiona productos, inventario, pedidos y contenido desde un panel propio.
 
-🔗 **Demo en vivo:** https://robelin-web-h76h.vercel.app/
+🔗 **Demo en vivo:** https://robelin-web.vercel.app/
 
 > Proyecto desarrollado para un cliente real.
 
